@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<!--
+  查看初日醫師團隊 按鈕（含彈窗:選院所 → 選醫師 → 開啟對應醫師頁面連結)
+
+  使用方式：
+  1. 若你要「直接打開這個檔案」預覽，直接開即可，已內建 <meta charset="UTF-8">。
+  2. 若要貼進你現有網頁，把 <body> 裡面「按鈕本體」開始到 </script> 這一段
+     連同上面的 <style> 一起複製過去，記得確認你現有頁面的 <head> 裡
+     已經有 <meta charset="UTF-8">（絕大部分網站都有），不然中文會變亂碼。
+-->
+<style>
+  .pill-btn-wrap{
+    display:flex;
+    justify-content:center;
+  }
+  .pill-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#FEE9D8;
+    color:#F37934;
+    border:none;
+    padding:12px 22px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .pill-btn:hover{background:#fddcb8;transform:translateY(-1px);}
+  .pill-btn svg{width:18px;height:18px;stroke:#F37934;}
+
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,.35);
+    display:none;
+    align-items:center;justify-content:center;
+    z-index:100;
+    padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff;
+    border-radius:18px;
+    width:100%;
+    max-width:420px;
+    padding:28px 24px;
+    position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+  }
+  .modal-close{
+    position:absolute;top:16px;right:16px;
+    background:none;border:none;
+    font-size:20px;color:#8a8a8a;
+    cursor:pointer;
+  }
+  .modal h3{margin:0 0 6px;color:#F37934;font-size:20px;}
+  .modal .sub{color:#8a8a8a;font-size:13px;margin-bottom:20px;}
+  .option-list{display:flex;flex-direction:column;gap:10px;}
+  .option-btn{
+    background:#FEE9D8;
+    color:#F37934;
+    border:none;
+    padding:14px 18px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .option-btn:hover{background:#fddcb8;}
+  .back-btn{
+    background:none;border:none;color:#8a8a8a;
+    font-size:14px;margin-bottom:14px;cursor:pointer;padding:0;
+  }
+  .back-btn:hover{color:#F37934;}
+
+  /* 跳轉後短暫高亮效果，套用到你現有的醫師名牌 DOM 上（同頁跳轉時使用） */
+  .doctor-highlight{
+    box-shadow:0 0 0 3px #F37934, 0 10px 28px rgba(243,121,52,.25) !important;
+    transition:box-shadow .3s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- 按鈕本體 -->
+<div class="pill-btn-wrap">
+  <button class="pill-btn" id="openTeamSearch">
+    查看初日醫師團隊
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </button>
+</div>
+
+<!-- 彈窗 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+
+    <div id="stepClinic">
+      <h3>初日醫師團隊查詢</h3>
+      <div class="sub">請選擇院所</div>
+      <div class="option-list" id="clinicList"></div>
+    </div>
+
+    <div id="stepDoctor" style="display:none;">
+      <button class="back-btn" id="backToClinic">‹ 返回院所選擇</button>
+      <h3 id="clinicTitle"></h3>
+      <div class="sub">請選擇醫師</div>
+      <div class="option-list" id="doctorList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const clinics = {
+    taipei:   { name:'台北初日', doctors:['宋晏仁醫師','鄧雯心醫師','魏士航醫師','李唐越醫師','周建安醫師','許芷瑜醫師','陳威龍醫師','王律婷醫師'] },
+    hsinchu:  { name:'新竹初日', doctors:['魏士航醫師','王律婷醫師','楊德仁醫師'] },
+    kaohsiung:{ name:'高雄初日', doctors:['李唐越醫師','李思賢醫師','范亞萱醫師','劉曜增醫師'] }
+  };
+
+  // 每位醫師對應到「初日診所」報名頁面上的名牌錨點
+  const doctorLinks = {
+    '宋晏仁醫師': 'https://events.cofit.me/genesis-16369#SD',
+    '鄧雯心醫師': 'https://events.cofit.me/genesis-16369#SD',
+    '李唐越醫師': 'https://events.cofit.me/genesis-16369#LW',
+    '魏士航醫師': 'https://events.cofit.me/genesis-16369#LW',
+    '周建安醫師': 'https://events.cofit.me/genesis-16369#CH',
+    '許芷瑜醫師': 'https://events.cofit.me/genesis-16369#CH',
+    '李思賢醫師': 'https://events.cofit.me/genesis-16369#LC',
+    '陳威龍醫師': 'https://events.cofit.me/genesis-16369#LC',
+    '劉曜增醫師': 'https://events.cofit.me/genesis-16369#LiuW',
+    '王律婷醫師': 'https://events.cofit.me/genesis-16369#LiuW',
+    '范亞萱醫師': 'https://events.cofit.me/genesis-16369#FY',
+    '楊德仁醫師': 'https://events.cofit.me/genesis-16369#FY'
+  };
+
+  function slug(name){ return 'doctor-' + name; }
+
+  const overlay = document.getElementById('overlay');
+  const stepClinic = document.getElementById('stepClinic');
+  const stepDoctor = document.getElementById('stepDoctor');
+  const clinicList = document.getElementById('clinicList');
+  const doctorList = document.getElementById('doctorList');
+  const clinicTitle = document.getElementById('clinicTitle');
+
+  document.getElementById('openTeamSearch').addEventListener('click', ()=>{
+    overlay.classList.add('show');
+    showClinicStep();
+  });
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+  document.getElementById('backToClinic').addEventListener('click', showClinicStep);
+
+  function closeModal(){ overlay.classList.remove('show'); }
+
+  function showClinicStep(){
+    stepDoctor.style.display='none';
+    stepClinic.style.display='block';
+    clinicList.innerHTML='';
+    Object.entries(clinics).forEach(([id,c])=>{
+      const btn = document.createElement('button');
+      btn.className='option-btn';
+      btn.textContent=c.name;
+      btn.addEventListener('click', ()=>showDoctorStep(id));
+      clinicList.appendChild(btn);
+    });
+  }
+
+  function showDoctorStep(clinicId){
+    const c = clinics[clinicId];
+    stepClinic.style.display='none';
+    stepDoctor.style.display='block';
+    clinicTitle.textContent = c.name;
+    doctorList.innerHTML='';
+    c.doctors.forEach(name=>{
+      const btn = document.createElement('button');
+      btn.className='option-btn';
+      btn.textContent=name;
+      btn.addEventListener('click', ()=>jumpToDoctor(name));
+      doctorList.appendChild(btn);
+    });
+  }
+
+  function jumpToDoctor(name){
+    closeModal();
+    const link = doctorLinks[name];
+    if(link){
+      window.open(link, '_blank');
+      return;
+    }
+    // 找不到連結時，退回原本「同頁跳轉到 id」的邏輯
+    const el = document.getElementById(slug(name));
+    if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.add('doctor-highlight');
+    setTimeout(()=>el.classList.remove('doctor-highlight'), 1800);
+  }
+})();
+</script>
+
+</body>
+</html>
