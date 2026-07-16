@@ -2,20 +2,36 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--
-  查看初日醫師團隊 按鈕（含彈窗:選院所 → 選醫師 → 開啟對應醫師頁面連結)
+  查看初日醫師團隊 按鈕（含下拉面板:選院所 → 選醫師 → 開啟對應醫師頁面連結)
 
-  使用方式：
-  1. 若你要「直接打開這個檔案」預覽，直接開即可，已內建 <meta charset="UTF-8">。
-  2. 若要貼進你現有網頁，把 <body> 裡面「按鈕本體」開始到 </script> 這一段
-     連同上面的 <style> 一起複製過去，記得確認你現有頁面的 <head> 裡
-     已經有 <meta charset="UTF-8">（絕大部分網站都有），不然中文會變亂碼。
+  這個版本是「錨定下拉面板」設計（不是全螢幕彈窗），
+  專門解決放進 iframe 時容器太小、彈窗顯示不完整的問題：
+  面板固定寬度、清單超過高度會自己內部捲動，
+  整體高度是可預期的，方便你設定 iframe 的固定尺寸。
+
+  建議的 iframe 嵌入方式（貼到 FeverSocial「原始碼」欄位）：
+
+  <iframe src="你放這個檔案的網址"
+          style="border:none;width:100%;max-width:360px;height:480px;"
+          scrolling="no"></iframe>
+
+  （寬度 360px、高度 480px 是抓最長的台北院所 8 位醫師清單抓出來的建議值，
+   面板本身內部清單超過會自動捲動，所以不用怕之後加醫師會超出。）
 -->
 <style>
-  .pill-btn-wrap{
-    display:flex;
-    justify-content:center;
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
   }
+
+  .widget{
+    position:relative;
+    display:inline-block;
+  }
+
   .pill-btn{
     display:inline-flex;
     align-items:center;
@@ -28,80 +44,82 @@
     font-size:16px;
     font-weight:600;
     cursor:pointer;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
     transition:background .15s ease, transform .15s ease;
   }
   .pill-btn:hover{background:#fddcb8;transform:translateY(-1px);}
   .pill-btn svg{width:18px;height:18px;stroke:#F37934;}
 
-  .overlay{
-    position:fixed;inset:0;
-    background:rgba(0,0,0,.35);
+  /* 錨定下拉面板：從按鈕下方展開，寬高固定、內部可捲動 */
+  .panel{
     display:none;
-    align-items:center;justify-content:center;
-    z-index:100;
-    padding:20px;
-  }
-  .overlay.show{display:flex;}
-  .modal{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    width:320px;
+    max-width:88vw;
     background:#fff;
-    border-radius:18px;
-    width:100%;
-    max-width:420px;
-    padding:28px 24px;
-    position:relative;
-    box-shadow:0 20px 60px rgba(0,0,0,.2);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+    border-radius:16px;
+    box-shadow:0 12px 32px rgba(0,0,0,.18);
+    padding:20px 18px;
+    z-index:10;
   }
-  .modal-close{
-    position:absolute;top:16px;right:16px;
+  .panel.show{display:block;}
+
+  .panel-close{
+    position:absolute;top:12px;right:12px;
     background:none;border:none;
-    font-size:20px;color:#8a8a8a;
+    font-size:18px;color:#8a8a8a;
     cursor:pointer;
+    line-height:1;
   }
-  .modal h3{margin:0 0 6px;color:#F37934;font-size:20px;}
-  .modal .sub{color:#8a8a8a;font-size:13px;margin-bottom:20px;}
-  .option-list{display:flex;flex-direction:column;gap:10px;}
+  .panel h3{margin:0 0 4px;color:#F37934;font-size:18px;}
+  .panel .sub{color:#8a8a8a;font-size:12px;margin-bottom:14px;}
+
+  .option-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height:240px;
+    overflow-y:auto;
+    padding-right:2px;
+  }
   .option-btn{
     background:#FEE9D8;
     color:#F37934;
     border:none;
-    padding:14px 18px;
+    padding:12px 16px;
     border-radius:10px;
-    font-size:16px;
+    font-size:15px;
     font-weight:600;
     text-align:left;
     cursor:pointer;
     transition:background .15s ease;
+    flex:0 0 auto;
   }
   .option-btn:hover{background:#fddcb8;}
+
   .back-btn{
-    background:none;border:none;color:#8a8a8a;
-    font-size:14px;margin-bottom:14px;cursor:pointer;padding:0;
+    background:none;
+    border:none;
+    color:#8a8a8a;
+    font-size:13px;
+    margin-bottom:10px;
+    cursor:pointer;
+    padding:0;
   }
   .back-btn:hover{color:#F37934;}
-
-  /* 跳轉後短暫高亮效果，套用到你現有的醫師名牌 DOM 上（同頁跳轉時使用） */
-  .doctor-highlight{
-    box-shadow:0 0 0 3px #F37934, 0 10px 28px rgba(243,121,52,.25) !important;
-    transition:box-shadow .3s ease;
-  }
 </style>
 </head>
 <body>
 
-<!-- 按鈕本體 -->
-<div class="pill-btn-wrap">
+<div class="widget" id="widget">
   <button class="pill-btn" id="openTeamSearch">
     查看初日醫師團隊
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   </button>
-</div>
 
-<!-- 彈窗 -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <button class="modal-close" id="modalClose">✕</button>
+  <div class="panel" id="panel">
+    <button class="panel-close" id="panelClose">✕</button>
 
     <div id="stepClinic">
       <h3>初日醫師團隊查詢</h3>
@@ -126,7 +144,7 @@
     kaohsiung:{ name:'高雄初日', doctors:['李唐越醫師','李思賢醫師','范亞萱醫師','劉曜增醫師'] }
   };
 
-  // 每位醫師對應到「初日診所」報名頁面上的名牌錨點
+  // 每位醫師對應到報名頁面上的名牌錨點
   const doctorLinks = {
     '宋晏仁醫師': 'https://events.cofit.me/genesis-16369#SD',
     '鄧雯心醫師': 'https://events.cofit.me/genesis-16369#SD',
@@ -142,24 +160,29 @@
     '楊德仁醫師': 'https://events.cofit.me/genesis-16369#FY'
   };
 
-  function slug(name){ return 'doctor-' + name; }
-
-  const overlay = document.getElementById('overlay');
+  const widget = document.getElementById('widget');
+  const panel = document.getElementById('panel');
   const stepClinic = document.getElementById('stepClinic');
   const stepDoctor = document.getElementById('stepDoctor');
   const clinicList = document.getElementById('clinicList');
   const doctorList = document.getElementById('doctorList');
   const clinicTitle = document.getElementById('clinicTitle');
 
-  document.getElementById('openTeamSearch').addEventListener('click', ()=>{
-    overlay.classList.add('show');
-    showClinicStep();
+  document.getElementById('openTeamSearch').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    panel.classList.toggle('show');
+    if(panel.classList.contains('show')) showClinicStep();
   });
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+  document.getElementById('panelClose').addEventListener('click', closePanel);
   document.getElementById('backToClinic').addEventListener('click', showClinicStep);
 
-  function closeModal(){ overlay.classList.remove('show'); }
+  // 點面板以外的地方就關閉
+  document.addEventListener('click', (e)=>{
+    if(!widget.contains(e.target)) closePanel();
+  });
+  panel.addEventListener('click', (e)=> e.stopPropagation());
+
+  function closePanel(){ panel.classList.remove('show'); }
 
   function showClinicStep(){
     stepDoctor.style.display='none';
@@ -190,18 +213,9 @@
   }
 
   function jumpToDoctor(name){
-    closeModal();
+    closePanel();
     const link = doctorLinks[name];
-    if(link){
-      window.open(link, '_blank');
-      return;
-    }
-    // 找不到連結時，退回原本「同頁跳轉到 id」的邏輯
-    const el = document.getElementById(slug(name));
-    if(!el) return;
-    el.scrollIntoView({behavior:'smooth', block:'center'});
-    el.classList.add('doctor-highlight');
-    setTimeout(()=>el.classList.remove('doctor-highlight'), 1800);
+    if(link) window.open(link, '_blank');
   }
 })();
 </script>
