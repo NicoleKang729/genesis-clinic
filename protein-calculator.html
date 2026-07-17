@@ -256,6 +256,9 @@
     font-family:inherit;
     cursor:pointer;
     transition:opacity .15s ease;
+    text-align:center;
+    text-decoration:none;
+    box-sizing:border-box;
   }
   .primary-btn:disabled{
     background:var(--ink-faint);
@@ -266,6 +269,31 @@
     margin-top:16px;
   }
   .cta-btn.show{display:block;}
+
+  .btn-pair{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  .btn-pair .primary-btn,.btn-pair .secondary-btn{
+    flex:1;
+    padding:14px 8px;
+  }
+  .btn-pair a.primary-btn{
+    box-shadow:0 4px 12px rgba(243,121,52,0.35);
+  }
+  .secondary-btn{
+    display:block;
+    background:#fff;
+    color:var(--accent);
+    border:1.5px solid var(--accent);
+    border-radius:14px;
+    font-size:15px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    text-align:center;
+  }
 
   .ghost-link{
     display:block;
@@ -417,7 +445,10 @@
         <div class="cv-note">＊以 1份 = 7g蛋白質 換算</div>
       </div>
 
-      <span class="ghost-link" onclick="resetAll()">重新計算</span>
+      <div class="btn-pair">
+        <button class="secondary-btn" onclick="resetAll()">重新計算</button>
+        <a class="primary-btn" href="https://hi.cofit.me/BcYta" target="_blank" rel="noopener">預約初診諮詢</a>
+      </div>
     </div>
 
     <div class="footer-note">
