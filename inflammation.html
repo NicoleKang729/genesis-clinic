@@ -499,7 +499,7 @@ function updateResult(){
   const box = document.getElementById('resultBox');
   if(count >= 3){
     box.classList.add('alert');
-    box.innerHTML = `⚠️ <div>目前勾選「有」<span class="count">${count}</span> 項，若中3項以上，你的身體<b>可能正在發炎</b>喔！建議參考下一頁飲食與生活對策。</div>`;
+    box.innerHTML = `⚠️ <div>目前勾選「有」<span class="count">${count}</span> 項，代表近期有多項健康狀況值得留意。慢性發炎可能受到多種因素影響，建議參考下一頁的飲食與生活建議。</div>`;
   } else {
     box.classList.remove('alert');
     box.innerHTML = `<span>目前勾選「有」：</span><span class="count" id="countNum">${count}</span><span>項</span>`;
