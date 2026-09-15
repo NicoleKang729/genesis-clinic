@@ -125,6 +125,10 @@
     font-family:inherit;
   }
   .option-btn:hover{background:#fddcb8;transform:translateY(-1px);}
+
+  /* 院所選擇列表：4個院所要擠在同一排，按鈕比醫師格窄一些、間距也縮小 */
+  #clinicList{gap:8px;}
+  #clinicList .option-btn{width:78px;font-size:11px;}
 </style>
 </head>
 <body>
@@ -157,7 +161,8 @@
   const clinics = {
     taipei:   { name:'台北初日', doctors:['宋晏仁醫師','鄧雯心醫師','魏士航醫師','李唐越醫師','周建安醫師','許芷瑜醫師','陳威龍醫師','王律婷醫師'] },
     hsinchu:  { name:'新竹初日', doctors:['魏士航醫師','王律婷醫師','楊德仁醫師'] },
-    kaohsiung:{ name:'高雄初日', doctors:['李唐越醫師','李思賢醫師','范亞萱醫師','劉曜增醫師'] }
+    taichung: { name:'台中初日', doctors:['李唐越醫師','宋晏仁醫師','魏士航醫師'] },
+    kaohsiung:{ name:'高雄初日', doctors:['李思賢醫師','范亞萱醫師','劉曜增醫師'] }
   };
 
   // 每位醫師對應到報名頁面上的名牌錨點
