@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.9.0/dist/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { overflow-x: hidden; }
-    body { overflow-x: hidden; max-width: 100%; }
+    /* 嵌入 iframe 用：頁面本身不產生任何捲軸，交給外層網頁捲動 */
+    html, body { overflow: hidden; height: auto; max-width: 100%; }
 
     .tl-section {
       max-width: 1080px;
@@ -55,6 +55,7 @@
       position: relative;
     }
     .mobile-carousel {
+      position: relative;
       display: flex;
       overflow-x: scroll;
       scroll-snap-type: x mandatory;
@@ -226,8 +227,8 @@
       seg.title = s.name;
       seg.addEventListener("click", () => {
         if (window.innerWidth > 720) {
+          // 電腦版卡片都已在畫面上，只做閃爍提示，不捲動（避免 iframe 內容被推動）
           const el = desktopCards[i];
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
           el.classList.remove("flash");
           void el.offsetWidth;
           el.classList.add("flash");
@@ -266,7 +267,6 @@
 
     // Update dots on scroll
     carousel.addEventListener("scroll", () => {
-      const index = Math.round(carousel.scrollLeft / carousel.clientWidth * (steps.length / (steps.length - 1) * (steps.length - 1) / steps.length + 0.5));
       const cards = carousel.querySelectorAll(".card");
       let closest = 0;
       let minDist = Infinity;
@@ -281,8 +281,12 @@
   }
 
   function scrollToSlide(i) {
-    const cards = document.getElementById("carousel").querySelectorAll(".card");
-    if (cards[i]) cards[i].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    // 只做水平捲動，不用 scrollIntoView（它會連帶捲動垂直方向，造成頁面跳動）
+    const carousel = document.getElementById("carousel");
+    const card = carousel.querySelectorAll(".card")[i];
+    if (!card) return;
+    const left = card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2;
+    carousel.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }
 
   buildProgressBar();
