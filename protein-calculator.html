@@ -16,9 +16,12 @@
     --accent-soft:#FDEADD;
   }
   *{box-sizing:border-box;}
+  /* 嵌入 iframe：頁面本身不產生捲軸，交給外層網頁捲動 */
+  html{overflow:hidden;min-height:100%;background:var(--bg);}
   body{
+    overflow:hidden;
     margin:0;
-    padding:24px 12px 60px;
+    padding:24px 12px 24px;
     background:var(--bg);
     font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
     color:var(--ink);
@@ -462,6 +465,7 @@
 <script>
 let selectedFactor = null;
 let currentPage = 1;
+let scrollReady = false; // 第一次載入不捲動，避免一進網頁就被拉到計算機
 
 function onWeightInput(){
   const weight = parseFloat(document.getElementById('weight').value);
@@ -503,7 +507,11 @@ function goPage(n){
   document.getElementById('page'+n).classList.add('active');
   currentPage = n;
   updateProgress();
-  window.scrollTo({top:0, behavior:'smooth'});
+  // 換頁時：如果計算機頂端已經捲出畫面，就把外層網頁捲回計算機頂端（看得到就不動）
+  if(scrollReady){
+    document.querySelector('.wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+  scrollReady = true;
 }
 
 function updateProgress(){
