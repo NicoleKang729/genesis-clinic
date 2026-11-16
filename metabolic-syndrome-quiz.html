@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>代謝症候群自我檢測｜五大指標你中幾個？</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,20 +14,9 @@
   --brand:#F07A1A; --brand-soft:#FFE4CC; --on-brand:#FFFFFF;
   --ok:#3B8C5F; --ok-soft:#E1F1E6; --warn:#D2361C; --warn-soft:#FCE0D8; --unk:#B8A496; --unk-soft:#F4ECE6;
   --focus:#C45400;
+  color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#1E130B; --paper:#2A1A10; --ink:#F8E8DA; --muted:#C9A387; --line:#4A3020;
-    --brand:#FF9A45; --brand-soft:#4A2A12; --on-brand:#2A1A10;
-    --ok:#6CC795; --ok-soft:#1E3526; --warn:#FF6B4F; --warn-soft:#4A1F16; --unk:#957C6C; --unk-soft:#3A271B; --focus:#FFB070;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#1E130B; --paper:#2A1A10; --ink:#F8E8DA; --muted:#C9A387; --line:#4A3020;
-  --brand:#FF9A45; --brand-soft:#4A2A12; --on-brand:#2A1A10;
-  --ok:#6CC795; --ok-soft:#1E3526; --warn:#FF6B4F; --warn-soft:#4A1F16; --unk:#957C6C; --unk-soft:#3A271B; --focus:#FFB070;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -89,7 +79,6 @@ button{font:inherit;cursor:pointer;color:inherit}
 .score .of{font-size:1.4rem;color:var(--muted);font-weight:600}
 .verdict{font-size:1.4rem;font-weight:900;margin:8px 0 8px;line-height:1.4}
 .verdict.bad{color:var(--warn)} .verdict.mid{color:#C25A00} .verdict.good{color:var(--ok)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .verdict.mid{color:#FFA75A}}
 .explain{margin:0 0 22px}
 .list{list-style:none;padding:0;margin:0 0 6px}
 .list li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
