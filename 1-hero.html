@@ -11,7 +11,7 @@
 :root{--ink:#3F3D56;--body:#5E5873;--muted:#718096;--line:#E2E8F0;--orange:#EB901D;--orange-deep:#BB7217;--cream:#FFFAF0;--peach:#FEEBC8;
   --pad-x:clamp(16px,5vw,24px);--pad-y:clamp(40px,8vw,72px)}
 *,*::before,*::after{box-sizing:border-box}
-html,body{margin:0;background:#FFFFFF}
+html,body{margin:0;background:transparent}
 body{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,'PingFang TC','Microsoft JhengHei',sans-serif;color:var(--body);line-height:1.7;-webkit-text-size-adjust:100%}
 img,svg{max-width:100%}
 .wrap{max-width:1200px;margin:0 auto;padding:var(--pad-y) var(--pad-x)}
@@ -21,7 +21,7 @@ img,svg{max-width:100%}
 .sec-title{margin:0;font-size:clamp(20px,5.2vw,34px);line-height:1.35;color:var(--ink);font-weight:700}
 .lead{margin:0;font-size:clamp(15px,3.8vw,17px);max-width:48em}
 :focus-visible{outline:3px solid #3E8CF0;outline-offset:2px}
-.hero{background:var(--cream)}
+.hero{background:transparent}
 .hero .wrap{display:grid;grid-template-columns:1fr;gap:clamp(28px,6vw,56px);align-items:center;padding-top:clamp(48px,10vw,96px);padding-bottom:clamp(48px,10vw,96px)}
 .hero-text{display:flex;flex-direction:column;gap:clamp(16px,3.5vw,24px);min-width:0}
 .eyebrow{margin:0;font-size:clamp(13px,3.4vw,15px);font-weight:700;color:var(--ink);letter-spacing:.12em}
@@ -31,7 +31,7 @@ img,svg{max-width:100%}
 .btn{font-family:inherit;font-weight:700;line-height:1;border-radius:8px;border:2px solid transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;text-decoration:none;transition:background .15s,color .15s;min-height:48px;padding:0 24px;font-size:16px}
 .btn-solid{background:#C46F0B;color:#FFFFFF}.btn-solid:hover{background:#A85E08;color:#FFFFFF}
 .btn-outline{background:transparent;color:var(--orange-deep);border-color:var(--orange)}.btn-outline:hover{background:#FEF3E2}
-.scale{background:#FFFFFF;border-radius:24px;padding:clamp(22px,5vw,36px);box-shadow:0 2px 6px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:20px;min-width:0}
+.scale{background:#FFFFFF;border-radius:24px;padding:clamp(22px,5vw,36px);border:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:20px;min-width:0}
 .scale-title{margin:0;font-size:15px;font-weight:700;color:var(--ink)}
 .bar{display:flex;height:20px;border-radius:100px;overflow:hidden}
 .bar span{display:block}
