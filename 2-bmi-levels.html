@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMI 分級說明</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3F3D56;--body:#5E5873;--muted:#718096;--line:#E2E8F0;--orange:#EB901D;--orange-deep:#BB7217;--cream:#FFFAF0;--peach:#FEEBC8;
+  --pad-x:clamp(16px,5vw,24px);--pad-y:clamp(40px,8vw,72px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:#FFFFFF}
+body{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,'PingFang TC','Microsoft JhengHei',sans-serif;color:var(--body);line-height:1.7;-webkit-text-size-adjust:100%}
+img,svg{max-width:100%}
+.wrap{max-width:1200px;margin:0 auto;padding:var(--pad-y) var(--pad-x)}
+.num{font-family:'Inter','Noto Sans TC',sans-serif;font-variant-numeric:tabular-nums}
+.sec-head{display:flex;align-items:center;gap:clamp(12px,3vw,20px)}
+.q-badge{width:clamp(52px,12vw,72px);height:clamp(52px,12vw,72px);border-radius:50%;background:var(--peach);color:var(--ink);font-size:clamp(20px,5vw,28px);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{margin:0;font-size:clamp(20px,5.2vw,34px);line-height:1.35;color:var(--ink);font-weight:700}
+.lead{margin:0;font-size:clamp(15px,3.8vw,17px);max-width:48em}
+:focus-visible{outline:3px solid #3E8CF0;outline-offset:2px}
+.wrap{display:flex;flex-direction:column;gap:clamp(24px,5vw,40px)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:clamp(14px,3vw,24px)}
+.card{border:1px solid var(--line);border-radius:20px;padding:clamp(22px,5vw,32px) clamp(18px,4vw,28px);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.card svg{width:clamp(110px,30vw,140px);height:auto}
+.card-name{font-size:clamp(19px,4.6vw,22px);font-weight:700;color:var(--ink)}
+.card-range{font-size:clamp(17px,4.2vw,20px);font-weight:700;color:var(--ink)}
+.card-desc{font-size:15px}
+.waist{background:#F5F5F5;border-radius:16px;padding:clamp(18px,4vw,24px) clamp(18px,4vw,28px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px}
+.waist strong{color:var(--ink);font-size:17px}
+.waist span{font-size:clamp(15px,3.8vw,16px)}
+/* 手機：卡片改成橫向排列，比較不占高度 */
+@media (max-width:560px){
+  .card{flex-direction:row;flex-wrap:wrap;text-align:left;align-items:center;column-gap:16px;row-gap:4px}
+  .card svg{width:88px;flex-shrink:0;order:0}
+  .card .meta{display:flex;flex-direction:column;flex:1;min-width:0}
+  .card-desc{flex-basis:100%;margin-top:6px}
+}
+@media (min-width:561px){ .card .meta{display:contents} }
+@media (min-width:640px){ .cards{grid-template-columns:repeat(3,minmax(0,1fr))} }
+
+/* 儀表動畫：捲動到畫面時，色條畫出來、指針擺到定位 */
+.card svg .needle{transform-box:view-box;transform-origin:70px 74px}
+.cards.ready .arc{stroke-dasharray:100;stroke-dashoffset:100}
+.cards.ready .needle{transform:rotate(var(--from))}
+.cards.play .arc{animation:draw 1s cubic-bezier(.3,.7,.3,1) forwards}
+.cards.play .needle{animation:swing 1.4s cubic-bezier(.3,1.5,.5,1) forwards}
+.cards.play .card:nth-child(2) .arc,.cards.play .card:nth-child(2) .needle{animation-delay:.18s}
+.cards.play .card:nth-child(3) .arc,.cards.play .card:nth-child(3) .needle{animation-delay:.36s}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes swing{from{transform:rotate(var(--from))}to{transform:rotate(0deg)}}
+.card{transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(63,61,86,.08)}
+.card:hover .needle{animation:wiggle .6s ease}
+@keyframes wiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(-10deg)}65%{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){
+  .cards.ready .arc{stroke-dashoffset:0}
+  .cards.ready .needle{transform:none}
+  .cards.play .arc,.cards.play .needle,.card:hover .needle{animation:none}
+  .card,.card:hover{transition:none;transform:none}
+}
+</style>
+</head>
+<body data-module="bmi-levels">
+<section id="know">
+<div class="wrap">
+  <div class="sec-head">
+    <span class="q-badge">Q1</span>
+    <h2 class="sec-title">BMI 多少算正常？<br>BMI ≥ 24 就該開始體位管理</h2>
+  </div>
+  <p class="lead">依衛生福利部國民健康署的標準，成人 BMI 介於 18.5 到未滿 24 屬於健康體位，24 到未滿 27 為過重，27 以上即屬肥胖。亞洲人在「過重」階段就可能已經開始累積內臟脂肪，若伴隨血壓、血糖或血脂異常，建議及早尋求專業醫師協助。</p>
+  <div class="cards">
+  <div class="card">
+    <svg aria-hidden="true" viewBox="0 0 140 80" fill="none"><path d="M10 74a60 60 0 0 1 120 0" stroke="#E2E8F0" stroke-width="12" stroke-linecap="round"/><path class="arc" pathLength="100" d="M10 74a60 60 0 0 1 30-52" stroke="#5CAD69" stroke-width="12" stroke-linecap="round"/><line class="needle" style="--from:-43deg" x1="70" y1="74" x2="34" y2="40" stroke="#3F3D56" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="74" r="7" fill="#3F3D56"/></svg>
+    <div class="meta"><span class="card-name">健康體位</span><span class="card-range num">BMI 18.5 – 23.9</span></div>
+    <span class="card-desc">維持均衡飲食與規律運動，定期留意腰圍變化。</span>
+  </div>
+  <div class="card">
+    <svg aria-hidden="true" viewBox="0 0 140 80" fill="none"><path d="M10 74a60 60 0 0 1 120 0" stroke="#E2E8F0" stroke-width="12" stroke-linecap="round"/><path class="arc" pathLength="100" d="M10 74a60 60 0 0 1 92-50" stroke="#EB901D" stroke-width="12" stroke-linecap="round"/><line class="needle" style="--from:-108deg" x1="70" y1="74" x2="86" y2="26" stroke="#3F3D56" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="74" r="7" fill="#3F3D56"/></svg>
+    <div class="meta"><span class="card-name">過重</span><span class="card-range num">BMI 24 – 26.9</span></div>
+    <span class="card-desc">身體已出現警訊，是開始調整生活型態的最佳時機。</span>
+  </div>
+  <div class="card">
+    <svg aria-hidden="true" viewBox="0 0 140 80" fill="none"><path class="arc" pathLength="100" d="M10 74a60 60 0 0 1 120 0" stroke="#E53E3E" stroke-width="12" stroke-linecap="round"/><line class="needle" style="--from:-162deg" x1="70" y1="74" x2="118" y2="58" stroke="#3F3D56" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="74" r="7" fill="#3F3D56"/></svg>
+    <div class="meta"><span class="card-name">肥胖</span><span class="card-range num">BMI ≥ 27</span></div>
+    <span class="card-desc">慢性病風險明顯上升，建議與醫師討論完整治療計畫。</span>
+  </div>
+  </div>
+  <div class="waist">
+    <strong>別忘了量腰圍</strong>
+    <span>男性 ≥ 90 公分、女性 ≥ 80 公分，即屬於腹部肥胖，就算 BMI 正常也要留意。</span>
+  </div>
+</div>
+</section>
+<script>
+/* 儀表進入畫面時才播放動畫 */
+(function(){
+  var cards = document.querySelector('.cards');
+  if (!cards || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  cards.classList.add('ready');
+  function play(){ cards.classList.add('play'); }
+  if (!('IntersectionObserver' in window)) { play(); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { play(); io.disconnect(); } });
+  }, { threshold: 0.35 });
+  io.observe(cards);
+})();
+</script>
+<script>
+/* 嵌在 iframe 時，自動回報高度給外層頁面，避免出現捲軸；單獨開啟時不影響 */
+(function(){
+  if (window.parent === window) return;
+  function send(){ window.parent.postMessage({ type: 'bmi-module-height', id: document.body.dataset.module, height: document.documentElement.scrollHeight }, '*'); }
+  window.addEventListener('load', send);
+  window.addEventListener('resize', send);
+  if (window.ResizeObserver) new ResizeObserver(send).observe(document.body);
+})();
+</script>
+</body>
+</html>
