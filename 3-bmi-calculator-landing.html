@@ -22,7 +22,6 @@ button{font-family:inherit}
 [hidden]{display:none!important}
 
 .quiz{max-width:640px;margin:0 auto;height:100%;max-height:820px;min-height:540px;display:flex;flex-direction:column;background:var(--cream);border-radius:32px;padding:28px 28px 32px;position:relative;overflow:hidden;overflow:clip}
-.quiz::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:var(--orange-soft);right:-110px;top:-120px;z-index:0}
 .quiz>*{position:relative;z-index:1}
 
 .top{display:flex;align-items:center;gap:14px;min-height:44px}
@@ -170,7 +169,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 @media (min-width:900px){
   body{padding:24px}
   .quiz{max-width:1040px;padding:36px 44px 40px;border-radius:36px}
-  .quiz::after{width:380px;height:380px;right:-140px;top:-170px}
   /* 首頁：左圖右文 */
   .intro{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:48px;text-align:left}
   .hero-art{max-width:none;margin:0}
