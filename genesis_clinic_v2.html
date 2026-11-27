@@ -34,7 +34,7 @@
 body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF8F3 0%,#FFF3E8 50%,#FFF8F3 100%);display:flex;align-items:flex-start;justify-content:center;padding:12px 12px 16px}
 html{overflow-x:hidden}
 
-.card{background:#fff;border-radius:var(--radius-xl);padding:0;max-width:660px;width:100%;box-shadow:0 8px 40px rgba(232,98,10,0.13);overflow:hidden;position:relative}
+.card{background:#fff;border-radius:var(--radius-xl);padding:0;max-width:880px;width:100%;box-shadow:0 8px 40px rgba(232,98,10,0.13);overflow:hidden;position:relative}
 
 .hero{background:linear-gradient(135deg,#E8620A 0%,#F5883A 60%,#FFB366 100%);padding:2rem 2rem 1.5rem;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.08)}
@@ -48,14 +48,14 @@ html{overflow-x:hidden}
 .hero-badge{display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:12px;color:#fff;font-weight:700;margin-top:10px}
 
 .form-area{padding:2rem}
-#formPage{display:flex;flex-direction:column}
-#formPage .field-row{grid-template-columns:1fr;gap:0}
-#formPage .field-group{margin-bottom:1.5rem}
-#formPage input[type=text],#formPage input[type=date],#formPage input[type=number]{padding:0 18px;height:60px;font-size:16px}
-#formPage .field-label{font-size:14px;margin-bottom:8px}
-#formPage .gender-btn{height:60px;padding:0 10px;font-size:16px}
-#formPage .hint-text{margin-bottom:1rem}
-#formPage .calc-btn{margin-top:.5rem;padding:20px}
+#formPage .field-group{margin-bottom:1.1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
+.form-grid .f-gender{grid-column:1/-1}
+.bars-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#adviceArea{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+#adviceArea .advice-card{margin-bottom:0}
+#adviceArea .advice-card:last-child:nth-child(odd){grid-column:1/-1}
+#formPage .calc-btn{margin-top:.5rem}
 
 .section-label{font-size:12px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--brand-light)}
@@ -155,6 +155,20 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
 .btn-appt{padding:13px;border:none;border-radius:var(--radius-lg);background:linear-gradient(135deg,#E8620A,#F5883A);color:#fff;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 14px rgba(232,98,10,0.35)}
 .btn-appt:hover{background:linear-gradient(135deg,#B34D08,#E8620A);transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,98,10,0.45)}
 
+@media(max-width:600px){
+  .field-row,.field-row-3{grid-template-columns:1fr;gap:0}
+  .form-grid{grid-template-columns:1fr}
+  .form-grid .f-name{order:1}.form-grid .f-birth{order:2}.form-grid .f-gender{order:3}.form-grid .f-height{order:4}.form-grid .f-weight{order:5}
+  #formPage .field-group{margin-bottom:1.5rem}
+  #formPage .field-label{font-size:14px;margin-bottom:8px}
+  #formPage input[type=text],#formPage input[type=date],#formPage input[type=number]{padding:0 18px;height:60px;font-size:16px}
+  #formPage .gender-btn{height:60px;padding:0 10px;font-size:16px}
+  #formPage .calc-btn{padding:20px}
+}
+@media(max-width:760px){
+  .bars-row,#adviceArea{grid-template-columns:1fr}
+  #adviceArea .advice-card{margin-bottom:12px}
+}
 @media(max-width:520px){
   .hero{padding:1.5rem 1.25rem 1.25rem}
   .form-area,.result-area{padding:1.5rem 1.25rem}
@@ -186,32 +200,30 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
   <div class="form-area" id="formPage">
     <div class="section-label">✏️ 填寫孩子資料</div>
 
-    <div class="field-group">
-      <label class="field-label">👤 孩子暱稱</label>
-      <input type="text" id="kidName" placeholder="例如：小寶、豆豆 🌟">
-    </div>
-    <div class="field-row">
-      <div class="field-group">
+    <div class="form-grid">
+      <div class="field-group f-name">
+        <label class="field-label">👤 孩子暱稱</label>
+        <input type="text" id="kidName" placeholder="例如：小寶、豆豆 🌟">
+      </div>
+      <div class="field-group f-birth">
         <label class="field-label">📅 生日</label>
         <input type="date" id="kidBirth" placeholder="年 / 月 / 日" onchange="checkBirth(this.value)">
         <div id="birthError" style="display:none;font-size:12px;color:#D32F2F;font-weight:700;margin-top:4px;padding:6px 10px;background:#FFF0EE;border-radius:8px;border-left:3px solid #F44336"></div>
       </div>
-      <div class="field-group">
+      <div class="field-group f-height">
+        <label class="field-label">📏 身高（cm）</label>
+        <input type="number" id="kidHeight" placeholder="例：120.5" step="0.1">
+      </div>
+      <div class="field-group f-weight">
+        <label class="field-label">⚖️ 體重（kg）</label>
+        <input type="number" id="kidWeight" placeholder="例：25.0" step="0.1">
+      </div>
+      <div class="field-group f-gender">
         <label class="field-label">🧒 性別</label>
         <div class="gender-btns">
           <div class="gender-btn" id="gb男" onclick="selectGender('男')"><span class="gender-icon">👦</span>男生</div>
           <div class="gender-btn" id="gb女" onclick="selectGender('女')"><span class="gender-icon">👧</span>女生</div>
         </div>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field-group">
-        <label class="field-label">📏 身高（cm）</label>
-        <input type="number" id="kidHeight" placeholder="例：120.5" step="0.1">
-      </div>
-      <div class="field-group">
-        <label class="field-label">⚖️ 體重（kg）</label>
-        <input type="number" id="kidWeight" placeholder="例：25.0" step="0.1">
       </div>
     </div>
     <div class="hint-text">※ 本工具僅適用於 6–17.5 歲兒童與青少年</div>
@@ -246,6 +258,7 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
         </div>
       </div>
 
+      <div class="bars-row">
       <!-- Height Bar -->
       <div class="bar-section">
         <div class="bar-title">📏 身高百分位分佈</div>
@@ -278,6 +291,7 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
           <div class="bmi-legend-item"><div class="bmi-legend-dot" style="background:#EF9A9A"></div>肥胖（＞P95）</div>
         </div>
         <div style="margin-top:10px"><span class="pct-badge" id="bmiBadge"></span></div>
+      </div>
       </div>
 
       <button class="calc-btn" onclick="showDetail()">📖 查看詳細建議與注意事項</button>
