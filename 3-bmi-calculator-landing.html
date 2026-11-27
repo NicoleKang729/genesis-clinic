@@ -243,6 +243,24 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   .step .value input{font-size:60px}
   .step .dial{padding:18px 24px 14px}
 }
+
+/* 電腦版結果頁：左欄放數據＋說明，右欄放飲食建議，盡量不用捲動 */
+@media (min-width:900px){
+  .res-left,.res-right{gap:12px}
+  .res-left{line-height:1.6}
+  .gauge-card{padding:16px 20px 16px}
+  .gauge{max-width:200px}
+  .bmi-big{font-size:50px;margin-top:2px}
+  .bmi-label{margin-top:0}
+  .tag{margin-top:10px;font-size:16px;padding:4px 16px}
+  .fat{padding:14px 20px;gap:6px}
+  .fat-row .num{font-size:30px}
+  .advice{padding:16px 20px;gap:8px}
+  .range-text{font-size:15px}
+  .line{font-size:14px;line-height:1.55}
+  .tip{font-size:12.5px;line-height:1.55;padding:8px 12px}
+  .fat-note{font-size:13px;line-height:1.5}
+}
 </style>
 </head>
 <body>
@@ -375,8 +393,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
       </p>
     </div>
 
-    </div>
-    <div class="res-right" id="resRight">
     <div class="advice">
       <p class="line range-text">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BB7217" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
@@ -390,6 +406,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
       <p class="tip">提醒：體脂率比起 BMI 更能具體衡量身體脂肪的百分比，準確反映一個人身體中的脂肪比例。</p>
     </div>
 
+    </div>
+    <div class="res-right" id="resRight">
     <div class="diet" id="dietCard">
       <h3 id="dietTitle"></h3>
       <div class="diet-body" id="dietBody">
