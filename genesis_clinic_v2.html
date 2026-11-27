@@ -31,7 +31,8 @@
   --radius:12px;--radius-lg:16px;--radius-xl:24px;
   --shadow:0 4px 24px rgba(232,98,10,0.10);
 }
-body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF8F3 0%,#FFF3E8 50%,#FFF8F3 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px 48px}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF8F3 0%,#FFF3E8 50%,#FFF8F3 100%);display:flex;align-items:flex-start;justify-content:center;padding:12px 12px 16px}
+html{overflow-x:hidden}
 
 .card{background:#fff;border-radius:var(--radius-xl);padding:0;max-width:660px;width:100%;box-shadow:0 8px 40px rgba(232,98,10,0.13);overflow:hidden;position:relative}
 
@@ -47,6 +48,14 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#FFF8F3 0
 .hero-badge{display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:12px;color:#fff;font-weight:700;margin-top:10px}
 
 .form-area{padding:2rem}
+#formPage{display:flex;flex-direction:column}
+#formPage .field-row{grid-template-columns:1fr;gap:0}
+#formPage .field-group{margin-bottom:1.5rem}
+#formPage input[type=text],#formPage input[type=date],#formPage input[type=number]{padding:0 18px;height:60px;font-size:16px}
+#formPage .field-label{font-size:14px;margin-bottom:8px}
+#formPage .gender-btn{height:60px;padding:0 10px;font-size:16px}
+#formPage .hint-text{margin-bottom:1rem}
+#formPage .calc-btn{margin-top:.5rem;padding:20px}
 
 .section-label{font-size:12px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--brand-light)}
@@ -63,6 +72,7 @@ input[type=date]:not(:valid){color:var(--text-hint)}
 input[type=date]:before{content:attr(placeholder);color:var(--text-hint);pointer-events:none}
 input[type=date]:focus:before,input[type=date]:valid:before{content:''}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
 .gender-btns{display:flex;gap:10px}
 .gender-btn{flex:1;padding:11px 10px;border:2px solid #F0EDE9;border-radius:var(--radius);
@@ -150,7 +160,7 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
   .form-area,.result-area{padding:1.5rem 1.25rem}
   .metric-cards{grid-template-columns:repeat(3,1fr)}
   .metric-val{font-size:22px}
-  .field-row{grid-template-columns:1fr}
+  .field-row,.field-row-3{grid-template-columns:1fr}
   .bottom-btns{grid-template-columns:1fr;gap:10px}
 }
 </style>
@@ -173,7 +183,7 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
   </div>
 
   <!-- FORM -->
-  <div class="form-area">
+  <div class="form-area" id="formPage">
     <div class="section-label">✏️ 填寫孩子資料</div>
 
     <div class="field-group">
@@ -269,6 +279,16 @@ input[type=date]:focus:before,input[type=date]:valid:before{content:''}
         </div>
         <div style="margin-top:10px"><span class="pct-badge" id="bmiBadge"></span></div>
       </div>
+
+      <button class="calc-btn" onclick="showDetail()">📖 查看詳細建議與注意事項</button>
+
+    </div>
+  </div>
+
+  <!-- DETAIL（第三頁：詳細建議） -->
+  <div class="result" id="detail">
+    <hr class="result-divider">
+    <div class="result-area">
 
       <div id="adviceArea"></div>
 
@@ -575,8 +595,22 @@ function calculate() {
     '</ul>');
 
   document.getElementById('adviceArea').innerHTML = advice;
+  document.getElementById('formPage').style.display = 'none';
+  document.getElementById('detail').classList.remove('active');
   document.getElementById('result').classList.add('active');
-  setTimeout(() => document.getElementById('result').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showDetail() {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'kids_detail_click', {
+      'event_category': '兒童生長評估',
+      'event_label': '查看詳細建議與注意事項'
+    });
+  }
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('detail').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function adv(type, icon, title, body) {
@@ -588,6 +622,11 @@ function adv(type, icon, title, body) {
 
 function resetForm() {
   document.getElementById('result').classList.remove('active');
+  document.getElementById('detail').classList.remove('active');
+  document.getElementById('formPage').style.display = '';
+  document.getElementById('hMarker').style.left = '50%';
+  document.getElementById('bmiMarker').style.left = '40%';
+  document.getElementById('birthError').style.display = 'none';
   ['kidName','kidBirth','kidHeight','kidWeight'].forEach(id => document.getElementById(id).value = '');
   gender = '';
   document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
@@ -597,6 +636,26 @@ function resetForm() {
 function goAppt() {
   window.open('https://events.cofit.me/Dr-Wang-Lu-Ting-32510', '_blank');
 }
+
+// 點生日欄位任何位置都直接跳出日期選單
+(function () {
+  const birth = document.getElementById('kidBirth');
+  function openPicker() {
+    try { if (birth.showPicker) birth.showPicker(); } catch (e) {}
+  }
+  birth.addEventListener('click', openPicker);
+  birth.addEventListener('focus', openPicker);
+})();
+
+// 讓官網的 iframe 依內容自動調整高度，避免出現兩個捲軸
+function postHeight() {
+  const card = document.querySelector('.card');
+  const h = card.offsetHeight + 24;
+  if (window.parent !== window) window.parent.postMessage({ type: 'genesis-height', height: h }, '*');
+}
+window.addEventListener('load', postHeight);
+window.addEventListener('resize', postHeight);
+if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector('.card'));
 </script>
 </body>
 </html>
