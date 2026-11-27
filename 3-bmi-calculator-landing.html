@@ -36,8 +36,8 @@ button{font-family:inherit}
 .stage{margin-top:24px;flex:1;min-height:0;display:flex;flex-direction:column}
 .stage .step.active{flex:1}
 .step .next{margin-top:auto;flex-shrink:0}
-.stage .step .q{margin-top:auto}
-.stage .step .choices{margin-bottom:auto}
+.stage .step > :first-child{margin-top:auto}
+
 .step{display:none;flex-direction:column;gap:24px}
 .step.active{display:flex;animation:in .35s ease}
 @keyframes in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
@@ -214,6 +214,37 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   .gauge-card{padding:32px 24px 28px}
   .bmi-big{font-size:76px}
 }
+
+/* 手機版：隱藏捲軸外觀（內容超出時仍可用手指滑動） */
+@media (max-width:899px){
+  .result{scrollbar-width:none;-ms-overflow-style:none}
+  .result::-webkit-scrollbar{display:none;width:0;height:0}
+}
+
+/* 一頁兩題 */
+.step{gap:18px}
+.qblock{display:flex;flex-direction:column;gap:10px}
+.q-sm{font-size:20px;display:flex;align-items:center;gap:10px}
+.qn{font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:#FFFFFF;background:var(--ink);border-radius:8px;padding:2px 8px;flex-shrink:0}
+.step .choices{gap:10px}
+.step .choice{flex-direction:row;justify-content:center;padding:10px 12px;gap:10px;font-size:18px;border-radius:18px}
+.step .choice svg{width:56px;height:56px}
+.step .dial{padding:14px 16px 12px;gap:10px;border-radius:20px}
+.step .readout{gap:12px}
+.step .step-btn{width:44px;height:44px;font-size:22px}
+.step .value input{font-size:48px}
+.step .value .unit{font-size:16px}
+.step .ticks{margin-top:-6px;font-size:12px}
+.need{margin:-6px 0 0;text-align:center;font-size:14px;font-weight:700;color:#C53030}
+@media (min-width:900px){
+  .stage .step > :first-child{margin-top:0}
+  .step{gap:22px}
+  .q-sm{font-size:24px}
+  .step .choice{padding:14px 16px;font-size:20px}
+  .step .choice svg{width:72px;height:72px}
+  .step .value input{font-size:60px}
+  .step .dial{padding:18px 24px 14px}
+}
 </style>
 </head>
 <body>
@@ -247,8 +278,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
     <button class="back" id="back" type="button" aria-label="上一題" disabled>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
-    <div class="bar" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
-    <span class="count num" id="count">1 / 4</span>
+    <div class="bar" aria-hidden="true"><span class="on"></span><span></span></div>
+    <span class="count num" id="count">1 / 2</span>
   </div>
 
   <div class="stage" id="stage" hidden>
@@ -262,9 +293,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
       </ol>
       <p class="recap-tip"><span class="nowrap">BMI ＝ 體重 ÷ 身高²</span><br>體脂率會再依年齡與性別推估。</p>
     </aside>
-    <!-- Q1 -->
+    <!-- 第 1 頁：性別＋年齡 -->
     <section class="step active" data-step="0">
-      <h2 class="q">請選擇你的生理性別</h2>
+      <div class="qblock">
+      <h2 class="q q-sm"><span class="qn">Q1</span>請選擇你的生理性別</h2>
       <div class="choices">
         <button type="button" class="choice" data-sex="m" aria-pressed="false">
           <svg viewBox="0 0 72 72" aria-hidden="true"><defs><clipPath id="cm"><circle cx="36" cy="36" r="34"/></clipPath></defs><circle cx="36" cy="36" r="34" fill="#DCEBFD"/><g clip-path="url(#cm)"><path d="M13 76 C13 61 23 53 36 53 C49 53 59 61 59 76Z" fill="#3E8CF0"/><path d="M30 53 L36 60 L42 53Z" fill="#FFFFFF"/></g><circle cx="20.5" cy="36" r="3.6" fill="#FFCFA6"/><circle cx="51.5" cy="36" r="3.6" fill="#FFCFA6"/><circle cx="36" cy="35" r="16" fill="#FFDDBF"/><path d="M19.5 33 C19 21 27 14.5 36 14.5 C46 14.5 53 21 52.5 32 C50 29 47 27.5 44 27 L45 30.5 C41 27.5 37 26.5 33 27 L34 29.5 C29.5 28.5 25 29.5 22 31.5Z" fill="#3F3D56"/><path d="M34 15 C35 11 38 10 40 11 C38 12 37 13.5 37 15.5Z" fill="#3F3D56"/><ellipse cx="30.5" cy="36" rx="2.2" ry="2.8" fill="#3F3D56"/><ellipse cx="41.5" cy="36" rx="2.2" ry="2.8" fill="#3F3D56"/><circle cx="31.3" cy="35" r="0.8" fill="#FFFFFF"/><circle cx="42.3" cy="35" r="0.8" fill="#FFFFFF"/><ellipse cx="26.5" cy="41" rx="3.2" ry="2" fill="#FF9EA8" opacity=".75"/><ellipse cx="45.5" cy="41" rx="3.2" ry="2" fill="#FF9EA8" opacity=".75"/><path d="M33.2 41.6 Q36 44.6 38.8 41.6" stroke="#3F3D56" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
@@ -275,11 +307,9 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
           生理女
         </button>
       </div>
-    </section>
-
-    <!-- Q2 -->
-    <section class="step" data-step="1">
-      <h2 class="q">你今年幾歲？</h2>
+      </div>
+      <div class="qblock">
+      <h2 class="q q-sm"><span class="qn">Q2</span>你今年幾歲？</h2>
       <div class="dial" data-field="age" data-min="18" data-max="90" data-val="30">
         <div class="readout">
           <button type="button" class="step-btn" data-d="-1" aria-label="減少一歲">−</button>
@@ -289,12 +319,15 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         <input type="range" aria-label="拖曳調整年齡">
         <div class="ticks num"><span>18</span><span>90</span></div>
       </div>
-      <button type="button" class="next">下一題</button>
+      </div>
+      <p class="need" id="needSex" hidden>請先選擇生理性別</p>
+      <button type="button" class="next">下一步</button>
     </section>
 
-    <!-- Q3 -->
-    <section class="step" data-step="2">
-      <h2 class="q">你的身高是多少？</h2>
+    <!-- 第 2 頁：身高＋體重 -->
+    <section class="step" data-step="1">
+      <div class="qblock">
+      <h2 class="q q-sm"><span class="qn">Q3</span>你的身高是多少？</h2>
       <div class="dial" data-field="height" data-min="130" data-max="210" data-val="160">
         <div class="readout">
           <button type="button" class="step-btn" data-d="-1" aria-label="減少一公分">−</button>
@@ -304,12 +337,9 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         <input type="range" aria-label="拖曳調整身高">
         <div class="ticks num"><span>130</span><span>210</span></div>
       </div>
-      <button type="button" class="next">下一題</button>
-    </section>
-
-    <!-- Q4 -->
-    <section class="step" data-step="3">
-      <h2 class="q">你的體重是多少？</h2>
+      </div>
+      <div class="qblock">
+      <h2 class="q q-sm"><span class="qn">Q4</span>你的體重是多少？</h2>
       <div class="dial" data-field="weight" data-min="30" data-max="150" data-val="60">
         <div class="readout">
           <button type="button" class="step-btn" data-d="-1" aria-label="減少一公斤">−</button>
@@ -318,6 +348,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         </div>
         <input type="range" aria-label="拖曳調整體重">
         <div class="ticks num"><span>30</span><span>150</span></div>
+      </div>
       </div>
       <button type="button" class="next">看我的結果</button>
     </section>
@@ -2769,6 +2800,7 @@ var qrcode = function() {
     data.sex = '';
     document.querySelectorAll('.choice').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
     $('intro').hidden = true;
+    $('needSex').hidden = true;
     visited = 0;
     go(0);
   }
@@ -2791,16 +2823,17 @@ var qrcode = function() {
   function updateRecap() {
     var vals = [data.sex === 'm' ? '男' : data.sex === 'f' ? '女' : '—', data.age + ' 歲', data.height + ' 公分', data.weight + ' 公斤'];
     document.querySelectorAll('.recap li').forEach(function (li, k) {
-      li.classList.toggle('current', k === cur);
-      li.classList.toggle('done', k < visited || (k === 0 && data.sex));
-      document.getElementById('rv' + k).textContent = (k === 0 || k <= visited) ? vals[k] : '—';
+      var page = k < 2 ? 0 : 1;
+      li.classList.toggle('current', page === cur);
+      li.classList.toggle('done', page < cur || (k === 0 && !!data.sex));
+      document.getElementById('rv' + k).textContent = (page <= visited) ? vals[k] : '—';
     });
   }
   function go(i) {
     cur = i;
     steps.forEach(function (s, k) { s.classList.toggle('active', k === i); });
     bars.forEach(function (b, k) { b.classList.toggle('on', k <= i); });
-    $('count').textContent = (i + 1) + ' / 4';
+    $('count').textContent = (i + 1) + ' / 2';
     $('back').disabled = i === 0;
     $('stage').hidden = false;
     $('result').classList.remove('active');
@@ -2809,13 +2842,13 @@ var qrcode = function() {
     updateRecap();
   }
 
-  // Q1 性別：點了直接進下一題
+  // Q1 性別
   document.querySelectorAll('.choice').forEach(function (b) {
     b.addEventListener('click', function () {
       data.sex = b.dataset.sex;
       updateRecap();
       document.querySelectorAll('.choice').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      setTimeout(function () { go(1); }, 220);
+      $('needSex').hidden = true;
     });
   });
 
@@ -2843,7 +2876,10 @@ var qrcode = function() {
   });
 
   document.querySelectorAll('.next').forEach(function (b) {
-    b.addEventListener('click', function () { cur < 3 ? go(cur + 1) : showResult(); });
+    b.addEventListener('click', function () {
+      if (cur === 0 && !data.sex) { $('needSex').hidden = false; return; }
+      cur < 1 ? go(cur + 1) : showResult();
+    });
   });
   $('back').addEventListener('click', function () { if (cur > 0) go(cur - 1); });
   $('startBtn').addEventListener('click', startGame);
